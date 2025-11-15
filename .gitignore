@@ -1,0 +1,47 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary Files
+*.tmp
+*.log
+*.bak
+*.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Test files (if any)
+test_output/
+*.test
+
+# Script-specific ignores
+# Apache proxy
+*.conf.bak
+nginx-test.conf
+
+# Frappe
+frappe_portable/
+*.bench
+
+# Personal notes
+notes.txt
+TODO.md
+*.md.bak
+

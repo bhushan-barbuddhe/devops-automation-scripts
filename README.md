@@ -1,186 +1,165 @@
-# 🚀 Automation Scripts Repository
+# 🚀 DevOps Automation Scripts
 
-A collection of powerful automation scripts designed to simplify server management, web development, and system administration tasks. Each script is crafted for reliability, ease of use, and comprehensive functionality.
+A curated collection of production-ready automation scripts for server management, web development, and system administration. Each script is designed with reliability, security, and ease of use in mind.
 
 ---
 
-## 📦 Scripts Overview
+## 📋 Table of Contents
 
-### 🔄 Apache Proxy Generator
-**File:** `create-apache-proxy.sh`  
-**Purpose:** Automatically creates Nginx reverse proxy configurations for Apache websites with SSL support  
-**Status:** ✅ Ready for Production
+- [Overview](#overview)
+- [Scripts](#scripts)
+- [Quick Start](#quick-start)
+- [Usage Guidelines](#usage-guidelines)
+- [Contributing](#contributing)
+- [License](#license)
 
-| Feature | Description |
-|---------|-------------|
-| 🔒 SSL Support | Auto-generates Let's Encrypt or self-signed certificates |
-| 🌐 Multi-domain | Supports multiple domains and subdomains |
-| 🛡️ Security Headers | Implements security best practices |
-| 📊 Conflict Detection | Identifies and resolves server name conflicts |
-| 🔧 aaPanel Integration | Works seamlessly with aaPanel configurations |
-| 📝 Comprehensive Logging | Detailed access and error logs |
+---
+
+## 🎯 Overview
+
+This repository contains reusable automation scripts that simplify common DevOps and system administration tasks. All scripts follow best practices for error handling, logging, and user experience.
+
+### Key Features
+
+- ✅ **Production Ready**: Tested and used in production environments
+- ✅ **Well Documented**: Comprehensive inline comments and usage examples
+- ✅ **Error Handling**: Robust error checking and user-friendly messages
+- ✅ **Cross-Platform**: Primarily Linux-focused with Ubuntu/Debian support
+- ✅ **Security First**: Implements security best practices
+
+---
+
+## 📦 Scripts
+
+### 🌐 Web Server Scripts
+
+#### Apache to Nginx Reverse Proxy
+**Location:** `scripts/web-server/apache-proxy.sh`  
+**Purpose:** Automatically creates Nginx reverse proxy configurations for Apache websites with optional SSL support
+
+**Features:**
+- 🔒 Automatic SSL certificate generation (Let's Encrypt or self-signed)
+- 🌐 Multi-domain and subdomain support
+- 🛡️ Security headers implementation
+- 📊 Server name conflict detection
+- 🔧 aaPanel integration support
+- 📝 Comprehensive logging
+- 🔄 Auto-renewal setup for Let's Encrypt certificates
+
+**Quick Usage:**
+```bash
+# HTTP only
+sudo ./scripts/web-server/apache-proxy.sh example.com 8080
+
+# With self-signed SSL
+sudo ./scripts/web-server/apache-proxy.sh example.com 8080 self
+
+# With Let's Encrypt SSL
+sudo ./scripts/web-server/apache-proxy.sh example.com 8080 letsencrypt
+```
+
+**See [Usage Guidelines](USAGE.md#apache-to-nginx-reverse-proxy) for detailed documentation.**
+
+---
+
+### 🎨 Frappe Framework Scripts
+
+#### Frappe Enhanced Setup Wizard
+**Location:** `scripts/frappe/frappe_enhanced_setup.sh`  
+**Purpose:** Interactive wizard for complete Frappe Framework setup including system dependencies, benches, and sites
+
+**Features:**
+- 🛠️ Complete system setup (dependencies, MySQL, SSH/Git, Python venv)
+- 🏗️ Bench creation with version selection
+- 🌐 Site creation with custom apps
+- 🚀 Development and production environment setup
+- 🎨 Automatic desk theme installation
+- 🔐 SSL certificate configuration
+- ⚙️ Supervisor and Nginx auto-configuration
+
+**Quick Usage:**
+```bash
+# Run the interactive wizard
+./scripts/frappe/frappe_enhanced_setup.sh
+```
+
+**See [Usage Guidelines](USAGE.md#frappe-enhanced-setup-wizard) for detailed documentation.**
+
+#### Frappe Icon Generator
+**Location:** `scripts/frappe/frappe_generate_icons.py`  
+**Purpose:** Converts Octicons SVG files to Frappe Framework icons.svg format
+
+**Features:**
+- 📦 Processes 24px icons (with and without fill variants)
+- 🔄 Automatic symbol ID generation
+- 📝 Proper formatting for Frappe compatibility
+- ✅ Handles both single-line and multi-line SVGs
+
+**Quick Usage:**
+```bash
+python3 scripts/frappe/frappe_generate_icons.py /path/to/octicons/icons ./output/icons.svg
+```
+
+**See [Usage Guidelines](USAGE.md#frappe-icon-generator) for detailed documentation.**
 
 ---
 
 ## ⚡ Quick Start
 
 ### Prerequisites
-- Ubuntu/Debian Linux server
-- Root or sudo access
-- Nginx installed
-- Apache2 installed (for proxy targets)
 
-### Manual Installation
+- **Operating System:** Ubuntu/Debian Linux (most scripts)
+- **Permissions:** Root or sudo access (for system-level scripts)
+- **Python:** Python 3.x (for Python scripts)
+- **Bash:** Bash 4.0+ (for shell scripts)
+
+### Installation
+
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/automation_scripts.git
-cd automation_scripts
+git clone https://github.com/yourusername/automation-scripts.git
+cd automation-scripts
 
 # Make scripts executable
-sudo chmod +x *.sh
+find scripts/ -type f -name "*.sh" -exec chmod +x {} \;
+find scripts/ -type f -name "*.py" -exec chmod +x {} \;
+```
 
-# Install to system path
-sudo cp create-apache-proxy.sh /usr/local/bin/
-sudo ln -s /usr/local/bin/create-apache-proxy.sh /usr/local/bin/apache-proxy
+### System-Wide Installation (Optional)
+
+```bash
+# Install scripts to system PATH
+sudo cp scripts/web-server/apache-proxy.sh /usr/local/bin/apache-proxy
+sudo cp scripts/frappe/frappe_enhanced_setup.sh /usr/local/bin/frappe-setup
+sudo chmod +x /usr/local/bin/apache-proxy /usr/local/bin/frappe-setup
+
+# Now you can use them from anywhere
+sudo apache-proxy example.com 8080 letsencrypt
+frappe-setup
 ```
 
 ---
 
-## 📖 Script Documentation
+## 📖 Usage Guidelines
 
-### 🔄 Apache Proxy Generator
-
-#### Description
-Creates Nginx reverse proxy configurations for Apache websites, enabling you to run multiple web applications on different ports while serving them through standard HTTP/HTTPS ports.
-
-#### Use Cases
-- **aaPanel Integration**: Proxy aaPanel Apache sites through Nginx
-- **Multi-app Hosting**: Run multiple PHP applications on one server
-- **SSL Termination**: Handle SSL at Nginx level for Apache backends
-- **Load Balancing**: Distribute traffic across multiple Apache instances
-
-#### Basic Usage
-```bash
-# HTTP only
-sudo create-apache-proxy.sh example.com 8080
-
-# With self-signed SSL
-sudo create-apache-proxy.sh example.com 8080 self
-
-# With Let's Encrypt SSL
-sudo create-apache-proxy.sh example.com 8080 letsencrypt
-
-# Using shortcut
-sudo apache-proxy subdomain.example.com 8080 self
-```
-
-#### Advanced Examples
-```bash
-# Multiple subdomains for different services
-sudo apache-proxy app.company.com 8080 letsencrypt
-sudo apache-proxy blog.company.com 8081 letsencrypt
-sudo apache-proxy shop.company.com 8082 letsencrypt
-
-# Development environment
-sudo apache-proxy dev.local 8080
-sudo apache-proxy staging.local 8081
-```
-
-#### Configuration Files
-- **Nginx Config**: `/etc/nginx/sites-available/[domain]`
-- **SSL Certificates**: `/etc/ssl/certs/` or `/etc/letsencrypt/live/`
-- **Log Files**: `/var/log/nginx/[domain].access.log`
-
-#### Troubleshooting
-```bash
-# Check configuration
-sudo nginx -t
-
-# View logs
-sudo tail -f /var/log/nginx/[domain].error.log
-
-# Test backend directly
-curl -I http://127.0.0.1:8080
-
-# Test proxy
-curl -I http://your-domain.com
-```
-
-#### Features & Benefits
-
-| Feature | Benefit |
-|---------|---------|
-| **Automatic SSL** | No manual certificate management |
-| **Server Name Resolution** | Prevents domain conflicts |
-| **Security Headers** | Enhanced security out of the box |
-| **Performance Optimization** | Optimized buffering and caching |
-| **Error Handling** | Comprehensive error detection |
-| **Auto-renewal** | Let's Encrypt certificates auto-renew |
+For detailed usage instructions, examples, and troubleshooting guides, see **[USAGE.md](USAGE.md)**.
 
 ---
 
-## 🤝 Contributing
+## 🗂️ Repository Structure
 
-We welcome contributions! Here's how you can help:
-
-### Adding New Scripts
-1. **Fork** the repository
-2. **Create** a new branch: `git checkout -b feature/new-script`
-3. **Follow** the script template:
-   ```bash
-   #!/bin/bash
-   # Script Name and Description
-   # Created by: [Your Name]
-   # Version: 1.0
-   # Usage: ./script.sh [parameters]
-   ```
-4. **Add documentation** to this README
-5. **Test thoroughly** on clean systems
-6. **Submit** a pull request
-
-### Script Requirements
-- ✅ **Error handling** with proper exit codes
-- ✅ **Colored output** for better UX
-- ✅ **Help documentation** built-in
-- ✅ **Logging capabilities**
-- ✅ **Configuration validation**
-- ✅ **Rollback functionality** where applicable
-
-### Code Style Guidelines
-- Use meaningful variable names
-- Include comments for complex logic
-- Implement proper error checking
-- Follow bash best practices
-- Test on multiple environments
-
----
-
-## 📞 Support
-
-### Getting Help
-- 📖 **Documentation**: Check script comments and this README
-- 🐛 **Issues**: Open an issue on GitHub for bugs
-- 💡 **Feature Requests**: Submit enhancement requests
-- 💬 **Discussions**: Join our community discussions
-
-### Common Issues
-1. **Permission Denied**: Ensure scripts are executable (`chmod +x`)
-2. **Command Not Found**: Check if script is in PATH
-3. **SSL Issues**: Verify domain DNS settings fo# automation-scripts
-A collection of powerful automation scripts designed to simplify server management, web development, and system administration tasks. Each script is crafted for reliability, ease of use, and comprehensive functionality.
-r Let's Encrypt
-4. **Port Conflicts**: Check if ports are already in use
-
-### Debugging Tips
-```bash
-# Enable debug mode
-bash -x script.sh
-
-# Check logs
-sudo tail -f /var/log/nginx/error.log
-
-# Validate configurations
-sudo nginx -t
+```
+automation-scripts/
+├── scripts/
+│   ├── frappe/
+│   │   ├── frappe_enhanced_setup.sh    # Frappe setup wizard
+│   │   └── frappe_generate_icons.py    # Icon converter
+│   └── web-server/
+│       └── apache-proxy.sh              # Nginx reverse proxy generator
+├── README.md                            # This file
+├── USAGE.md                             # Detailed usage guidelines
+├── LICENSE                              # MIT License
+└── .gitignore                           # Git ignore rules
 ```
 
 ---
@@ -188,6 +167,14 @@ sudo nginx -t
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Frappe Framework community
+- Nginx and Apache communities
+- All contributors and users
 
 ---
 
