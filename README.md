@@ -64,6 +64,28 @@ sudo ./scripts/web-server/apache-proxy.sh example.com 8080 letsencrypt
 
 ### 🎨 Frappe Framework Scripts
 
+#### Frappe Development Setup
+**Location:** `scripts/frappe/frappe_dev_setup.sh`  
+**Purpose:** Streamlined setup script for Frappe Framework development environment
+
+**Features:**
+- 🛠️ Installs all system dependencies (Python, Node.js, MySQL, Redis, Nginx, etc.)
+- 📦 Node.js 18+ installation and upgrade
+- 🧶 Yarn package manager setup via Corepack
+- 🗄️ MySQL/MariaDB configuration
+- 🔑 SSH key generation and Git configuration
+- 🐍 Python virtual environment with frappe-bench
+- 🏗️ Interactive bench and site creation
+- 🚀 Optional development server startup
+
+**Quick Usage:**
+```bash
+# Run the setup script
+./scripts/frappe/frappe_dev_setup.sh
+```
+
+**See [Usage Guidelines](USAGE.md#frappe-development-setup) for detailed documentation.**
+
 #### Frappe Enhanced Setup Wizard
 **Location:** `scripts/frappe/frappe_enhanced_setup.sh`  
 **Purpose:** Interactive wizard for complete Frappe Framework setup including system dependencies, benches, and sites
@@ -152,6 +174,7 @@ For detailed usage instructions, examples, and troubleshooting guides, see **[US
 automation-scripts/
 ├── scripts/
 │   ├── frappe/
+│   │   ├── frappe_dev_setup.sh         # Frappe development setup
 │   │   ├── frappe_enhanced_setup.sh    # Frappe setup wizard
 │   │   └── frappe_generate_icons.py    # Icon converter
 │   └── web-server/

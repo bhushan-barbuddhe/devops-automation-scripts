@@ -7,6 +7,7 @@ Comprehensive usage documentation for all scripts in this repository.
 ## Table of Contents
 
 - [Apache to Nginx Reverse Proxy](#apache-to-nginx-reverse-proxy)
+- [Frappe Development Setup](#frappe-development-setup)
 - [Frappe Enhanced Setup Wizard](#frappe-enhanced-setup-wizard)
 - [Frappe Icon Generator](#frappe-icon-generator)
 
@@ -168,6 +169,274 @@ sudo systemctl reload nginx
 **Issue:** "502 Bad Gateway"
 - **Solution:** Verify Apache is running on the specified port
 - Check Apache logs: `sudo tail -f /var/log/apache2/error.log`
+
+---
+
+## 🎨 Frappe Development Setup
+
+**Script:** `scripts/frappe/frappe_dev_setup.sh`  
+**Category:** Frappe Framework  
+**Requires:** User-level access (not root), sudo privileges
+
+### Description
+
+Streamlined setup script for Frappe Framework development environment. Automatically installs all required system dependencies, configures development tools, and optionally creates a development bench and site. Perfect for quickly setting up a new Frappe development environment.
+
+### Prerequisites
+
+- Ubuntu/Debian Linux
+- User account with sudo privileges
+- Internet connection
+- At least 4GB RAM recommended
+- 20GB+ free disk space
+
+### Basic Usage
+
+```bash
+# Run the setup script
+./scripts/frappe/frappe_dev_setup.sh
+```
+
+The script runs interactively and will:
+1. Install all system dependencies
+2. Set up Node.js, Yarn, MySQL
+3. Configure SSH and Git
+4. Create Python virtual environment
+5. Optionally create a development bench and site
+6. Optionally start the development server
+
+### What Gets Installed
+
+#### System Packages
+- Python 3 development tools (python3-dev, python3-pip, python3-venv)
+- Build essentials (gcc, build-essential)
+- Git and curl
+- Redis server
+- MySQL/MariaDB server and client
+- Nginx web server
+- Supervisor process manager
+- Certbot for SSL certificates
+- wkhtmltopdf for PDF generation
+- libffi-dev and other development libraries
+
+#### Development Tools
+- **Node.js 18+**: Installed or upgraded if needed
+- **Yarn**: Installed via Corepack
+- **Python Virtual Environment**: Created at `~/frappe/venv`
+- **frappe-bench**: Installed in the virtual environment
+
+### Interactive Flow
+
+#### Step 1: System Dependencies
+The script automatically installs all required system packages. You'll be prompted for your sudo password.
+
+#### Step 2: Node.js Setup
+- Checks if Node.js is installed
+- If not installed or version < 18, installs/upgrades to Node.js 18+
+- Uses NodeSource repository for installation
+
+#### Step 3: Yarn Installation
+- Enables Corepack
+- Installs Yarn via Corepack
+
+#### Step 4: MySQL Configuration
+- Enables and starts MariaDB service
+- Runs `mysql_secure_installation` if MySQL root password is not set
+
+#### Step 5: SSH and Git Setup
+- Generates SSH key if it doesn't exist (`~/.ssh/id_rsa`)
+- Displays public SSH key for GitHub/GitLab setup
+- Prompts for Git username and email if not configured
+
+#### Step 6: Python Virtual Environment
+- Creates virtual environment at `~/frappe/venv`
+- Upgrades pip and wheel
+- Installs frappe-bench
+
+#### Step 7: Bench Creation (Optional)
+After base setup, you'll be prompted:
+```bash
+Create dev bench now? (y/n):
+```
+
+If yes:
+- **Bench name**: Default is `dev-bench` (customizable)
+- **Frappe version**: Default is `develop` (customizable)
+- Bench will be created at `~/frappe/[bench-name]`
+
+#### Step 8: Site Creation (Optional)
+If bench is created, you'll be prompted:
+```bash
+Create default site site1.local? (y/n):
+```
+
+If yes:
+- **Site name**: Default is `site1.local` (customizable)
+- Site will be created in the bench
+
+#### Step 9: Start Development Server (Optional)
+After site creation, you'll be prompted:
+```bash
+Start bench start now? (y/n):
+```
+
+If yes, the development server starts immediately. Otherwise, you'll get instructions to start it later.
+
+### Configuration Locations
+
+- **Frappe Home:** `~/frappe/`
+- **Virtual Environment:** `~/frappe/venv/`
+- **Benches:** `~/frappe/[bench-name]/`
+- **Sites:** `~/frappe/[bench-name]/sites/[site-name]/`
+
+### Examples
+
+#### Example 1: Complete Setup with Defaults
+```bash
+./scripts/frappe/frappe_dev_setup.sh
+# Answer 'y' to all prompts
+# Creates: dev-bench with site1.local
+```
+
+#### Example 2: Base Setup Only
+```bash
+./scripts/frappe/frappe_dev_setup.sh
+# Answer 'n' to bench creation
+# Only installs system dependencies
+```
+
+#### Example 3: Custom Bench and Site
+```bash
+./scripts/frappe/frappe_dev_setup.sh
+# Bench name: my-project
+# Frappe version: version-15
+# Site name: myproject.local
+```
+
+### Manual Bench Operations
+
+After running the script, you can manually:
+
+#### Create Additional Benches
+```bash
+source ~/frappe/venv/bin/activate
+cd ~/frappe
+bench init --frappe-branch version-15 my-other-bench
+```
+
+#### Create Additional Sites
+```bash
+cd ~/frappe/[bench-name]
+bench new-site newsite.local
+```
+
+#### Start Development Server
+```bash
+cd ~/frappe/[bench-name]
+bench start
+```
+
+#### Access Development Site
+- Open browser: `http://site1.local:8000`
+- Login with Administrator credentials set during site creation
+
+### Features
+
+#### Error Handling
+- Script uses `set -euo pipefail` for strict error handling
+- Traps errors and displays friendly error messages
+- Prevents running as root user
+
+#### Safety Checks
+- Checks if Node.js version is sufficient
+- Skips installation if tools already exist
+- Prevents overwriting existing benches and sites
+- Validates bench exists before creating sites
+
+#### User Experience
+- Color-coded output (green for success, yellow for warnings, red for errors)
+- Clear progress indicators with emojis
+- Helpful error messages with line numbers
+- Non-interactive prompts with sensible defaults
+
+### Troubleshooting
+
+#### Script Fails with "Don't run this script as root"
+**Solution:** Run as a regular user with sudo privileges. The script will prompt for sudo password when needed.
+
+#### MySQL Installation Fails
+```bash
+# Check if MySQL is already running
+sudo systemctl status mariadb
+
+# Try manual installation
+sudo apt update
+sudo apt install -y mariadb-server mariadb-client
+```
+
+#### Node.js Installation Issues
+```bash
+# Check current Node.js version
+node -v
+
+# Manual Node.js 18 installation
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+#### Virtual Environment Issues
+```bash
+# Activate virtual environment manually
+source ~/frappe/venv/bin/activate
+
+# Reinstall frappe-bench
+pip install --upgrade frappe-bench
+```
+
+#### Bench Creation Fails
+- Ensure virtual environment is activated
+- Check internet connection (bench downloads from GitHub)
+- Verify Git is configured: `git config --global user.name` and `git config --global user.email`
+
+#### Site Creation Fails
+- Verify MySQL is running: `sudo systemctl status mariadb`
+- Check MySQL credentials
+- Ensure bench exists before creating site
+- Check bench logs: `tail -f ~/frappe/[bench-name]/logs/web.log`
+
+#### Development Server Won't Start
+```bash
+# Check if ports are in use
+sudo netstat -tulpn | grep -E ':(8000|9000|6787)'
+
+# Check bench status
+cd ~/frappe/[bench-name]
+bench doctor
+
+# View logs
+tail -f ~/frappe/[bench-name]/logs/web.log
+```
+
+### Differences from Enhanced Setup
+
+| Feature | Dev Setup | Enhanced Setup |
+|---------|-----------|----------------|
+| **Purpose** | Quick dev environment | Complete production setup |
+| **Complexity** | Simple, streamlined | Full-featured wizard |
+| **SSL Setup** | ❌ No | ✅ Yes |
+| **Supervisor Config** | ❌ No | ✅ Yes |
+| **Production Config** | ❌ No | ✅ Yes |
+| **Custom Apps** | ❌ No | ✅ Yes |
+| **Theme Installation** | ❌ No | ✅ Yes |
+| **Use Case** | Development only | Development + Production |
+
+### Tips
+
+- **First Time Setup**: Run the script and answer 'y' to all prompts for a complete setup
+- **Existing Environment**: Answer 'n' to bench creation if you just need to update dependencies
+- **Multiple Benches**: Run the script multiple times or create benches manually after initial setup
+- **Version Control**: The script sets up Git, but you'll need to add your SSH key to GitHub/GitLab
+- **Development Workflow**: After setup, use `bench start` in your bench directory to start development
 
 ---
 
